@@ -84,7 +84,7 @@ $(document).ready(function(){
         parkRes.data.forEach(function(data){
           
             // Create a button with the name of each park returned in the response, and add class parkBtn.
-            var newParkBtn = $("<button class='parkBtn'>").text(data.name);
+            var newParkBtn = $("<button class='parkBtn waves-effect waves-light btn-small'>").text(data.name);
 
             // Add a data-name attribute with each park name.
             newParkBtn.attr("data-name", data.parkCode);
@@ -112,12 +112,12 @@ $(document).ready(function(){
         }).then(function(alertRes){
             // console.log(alertRes);
 
-            // Created new div and h3.
+            // Created new div and h4.
             var newAlertDiv = $("<div class='alertDiv'>");
-            var newAlertH3 = $("<h3>").text("Park Alerts");
+            var newAlertH4 = $("<h4>").text("Park Alerts");
 
-            // Append the new h3 to the new div.
-            newAlertDiv.append(newAlertH3);
+            // Append the new h4 to the new div.
+            newAlertDiv.append(newAlertH4);
 
             // Append the new div to the div with class alert. 
             $(".alert").append(newAlertDiv);
@@ -131,11 +131,11 @@ $(document).ready(function(){
                 // If API has a populated response, than loop through it.
                 alertRes.data.forEach(function(alert){
                     // Create new h4, p, and if there is an url it also creates a "a" tag.
-                    var newAlertH4 = $("<h4>").text(alert.title);
+                    var newAlerth5 = $("<h5>").text(alert.title);
                     var newAlertP = $("<p>").text(alert.description);
                     if (alert.url !== ""){var newAlertA = $("<a>").attr("href", alert.url).text(alert.title);}
                     // Append the new tags to the new div.
-                    newAlertDiv.append(newAlertH4, newAlertP, newAlertA);  
+                    newAlertDiv.append(newAlerth5, newAlertP, newAlertA);  
                 })
             }
         })
@@ -151,12 +151,12 @@ $(document).ready(function(){
         }).then(function(campRes){
             // console.log(campRes);
 
-            // Created new div and h3.
+            // Created new div and h4.
             var newCampDiv = $("<div class='campDiv'>");
-            var newCampH3 = $("<h3>").text("Campgrounds");
+            var newCampH4 = $("<h4>").text("Campgrounds");
 
-            // Append the new h3 to the new div.
-            newCampDiv.append(newCampH3);
+            // Append the new h4 to the new div.
+            newCampDiv.append(newCampH4);
 
             // Append the new div to the div with class camp. 
             $(".camp").append(newCampDiv);
@@ -169,12 +169,12 @@ $(document).ready(function(){
             else{
                 // If API has a populated response, than loop through it.
                 campRes.data.forEach(function(camp){
-                    // Create new h4, p, and if there is an url for reservation it also creates a "a" tag.
-                    var newCampH4 = $("<h4>").text(camp.name);
+                    // Create new h5, p, and if there is an url for reservation it also creates a "a" tag.
+                    var newCamph5 = $("<h5>").text(camp.name);
                     var newCampP = $("<p>").text(camp.description);
                     if (camp.reservationUrl !== ""){var newCampA = $("<a>").attr("href", camp.reservationUrl).text("Click Here for Reservation")}
                     // Append the new tags to the new div.
-                    newCampDiv.append(newCampH4, newCampP, newCampA);
+                    newCampDiv.append(newCamph5, newCampP, newCampA);
                 })
             }
         })
@@ -193,11 +193,11 @@ $(document).ready(function(){
             // variable to save the response path.
             var activities = toDoRes.data;
 
-            // Created new div and h3.
+            // Created new div and h4.
             var toDoDiv = $("<div class='toDoDiv'>");
-            var actHead = $("<h3>").text("Park Activites");
+            var actHead = $("<h4>").text("Park Activites");
 
-            // Append the new h3 to the new div.
+            // Append the new h4 to the new div.
             toDoDiv.append(actHead);
 
             // Append the new div to the div with class toDo. 
@@ -205,7 +205,7 @@ $(document).ready(function(){
 
             // In case the API return without any information for that park, then display a message.
             if (toDoRes.data.length === 0){
-                var toDoP = $("<p>").text("There are no activities listed for this park at his time.")
+                var toDoP = $("<p>").text("There are no activities listed for this park at this time.")
                 toDoDiv.append(toDoP);
             }
             else{
@@ -271,7 +271,7 @@ $(document).ready(function(){
         favParkArray.forEach(function(favLoop){
 
             // Create a button, give class favParkBtn, add text and attributes saved in the object properties so the favorite park function just like the park buttons.
-            var favoritesBtn = $("<button class='favParkBtn'>").text(favLoop.text).attr("data-name", favLoop.dataName).attr("value", favLoop.value).attr("data-state", favLoop.dataState);
+            var favoritesBtn = $("<button class='favParkBtn waves-effect waves-light btn-small'>").text(favLoop.text).attr("data-name", favLoop.dataName).attr("value", favLoop.value).attr("data-state", favLoop.dataState);
             // Append the new buttons to the div created at variable newFavDiv.
             newFavDiv.append(favoritesBtn);
         })
@@ -298,14 +298,14 @@ $(document).ready(function(){
         // Grab button text to update the global variable parkName.
         parkName = $(this).text();
         
-        // Create a new h3 with the park name.
-        var parkNameH3 = $("<h3 class='header'>").text(parkName + " National Park");
+        // Create a new h4 with the park name.
+        var parkNameH4 = $("<h4 class='header'>").text(parkName + " National Park");
         
         // Everytime a park name button is clicked the header is updated with the current clicked park name.
-        $("header").empty().append(parkNameH3);
+        $("header").empty().append(parkNameH4);
 
         // Create a button that gives the user the option to save the current park as favorite.
-        var favBtn = $("<button class='favBtn'>").text("Save this park as Favorite");
+        var favBtn = $("<button class='favBtn waves-effect waves-light btn-large'>").text("Save this park as Favorite");
         // Attach this button to the div with class favBtnDiv.
         $(".favBtnDiv").empty().append(favBtn);       
 
@@ -354,11 +354,11 @@ $(document).ready(function(){
         // Grab button text to update the global variable parkName.
         parkName = $(this).text();
         
-        // Create a new h3 with the park name.
-        var parkNameH3 = $("<h3 class='header'>").text(parkName + " National Park");
+        // Create a new h4 with the park name.
+        var parkNameH4 = $("<h4 class='header'>").text(parkName + " National Park");
         
         // Everytime a park name button is clicked the header is updated with the current clicked park name.
-        $("header").empty().append(parkNameH3);
+        $("header").empty().append(parkNameH4);
 
         // Update weather URL with currenty city.
         fiveDayWeatherURL = "https://api.openweathermap.org/data/2.5/forecast?units=imperial" + "&appid=" + APIWeatherKey + "&q=" + parkCity;
@@ -402,15 +402,15 @@ $(document).ready(function(){
 
             // Variable to hold the forecast array.
             var forecastArray = fiveDayRes.list
-            // Create a new h2 tag.
-            var newDayH3 = $("<h2>").text("5-Day Forecast");
-            // Create a new h3 tag with the current park city name.
-            var newDayH2 = $("<h3>").text(parkCity);
+            // Create a new h4 tag.
+            var newDayH4 = $("<h4>").text("5-Day Forecast");
+            // Create a new h5 tag with the current park city name.
+            var newDayH5 = $("<h5>").text(parkCity);
             // Create a div with a class named card-deck to place the forecast result.
             var newCardDeck = $("<div class='card-deck'>");
 
-            // Clean the div with id forecast-weather and append the new h2, h3, and div.
-            $("#forecast-weather").empty().append(newDayH3, newDayH2, newCardDeck);
+            // Clean the div with id forecast-weather and append the new h5, h6, and div.
+            $("#forecast-weather").empty().append(newDayH4, newDayH5, newCardDeck);
 
             // For loop to take the one day out of forecast array.
             for (var i=0; i < forecastArray.length; i+=8){
