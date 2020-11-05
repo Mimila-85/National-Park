@@ -408,7 +408,7 @@ $(document).ready(function(){
             // Create a new h4, h5 and div tag.
             const newDay = `<h4>5-Day Forecast</h4>
             <h5>${parkCity}</h5>
-            <div class="card-deck"></div>;`
+            <div class="card-deck"></div>`
 
             // Clean the div with id forecast-weather and append the new h5, h6, and div.
             $("#forecast-weather").empty().append(newDay);
