@@ -2,37 +2,37 @@
 $(document).ready(function(){
 
     // Global variables for the API keys that will be used in different AJAX calls.
-    var APIWeatherKey = "b37332257de420fc6dfcda2bbba28fbd";
-    var APIParkKey = "IeMPkZS36TxiVcv1TUIT5yzANx6szGLJE5BsDsZA";
+    const APIWeatherKey = "b37332257de420fc6dfcda2bbba28fbd";
+    const APIParkKey = "IeMPkZS36TxiVcv1TUIT5yzANx6szGLJE5BsDsZA";
 
     // Global variable to store user state input.
-    var inputStateCode = "";
+    let inputStateCode
 
     // Global variable to save the city where the park is located, captured on address function, inside AJAX call for parks.
-    var parkCity = "";
+    let parkCity
 
     // Global variable to hold park code.
-    var parkCode = "";
+    let parkCode
 
     // Global variable to hold park alerts URL to be used in the event listener for the park button.
-    var parkAlertsURL = "";
+    let parkAlertsURL
 
     // Global variable to hold park campground URL to be used in the event listener for the park button.
-    var parkCampURL = "";
+    let parkCampURL
 
     // Global variable to hold park things to do URL to be used in the event listener for the park button.
-    var parkThingsToDoURL = "";
+    let parkThingsToDoURL
 
     // Global variable to hold 5-day forecast URL to be used in the event listener for the park button.
-    var fiveDayWeatherURL = "";
+    let fiveDayWeatherURL
 
     // Array to store saved favorite parks.
-    var favParkArray = [];
+    let favParkArray = [];
     // console.log(favParkArray);    
 
     // Event listner to the state options drop down menu.
     $("#stateCode").on("change", function(){
-        var state = $(this).val();
+        const state = $(this).val();
         // console.log(state);
         // Update the global variable inputStateCode with the selected state.
         inputStateCode = state;
@@ -46,7 +46,7 @@ $(document).ready(function(){
     // Function initial sets how the page should look when it is first loaded or refreshed by user.
     function initial(){
         // variable created to get items storage in the local storage and update favParkArray.
-        var storedFav = JSON.parse(localStorage.getItem("favParkArray"));
+        const storedFav = JSON.parse(localStorage.getItem("favParkArray"));
         // If the saved objected in the local storage is not empty, then push the saved information to the favParkArray.
         if (storedFav !== null){
             favParkArray = storedFav;
@@ -63,43 +63,43 @@ $(document).ready(function(){
     // Function that list all parks for the selected state, from input on #stateCode listner event.
     function getParks(state){
     // Park API URL query by state code.
-    var parkURL = "https://developer.nps.gov/api/v1/parks?api_key=" + APIParkKey + "&stateCode=" + state;
+    const parkURL = "https://developer.nps.gov/api/v1/parks?api_key=" + APIParkKey + "&stateCode=" + state;
     // AJAX call for parks.
     $.ajax({
         url: parkURL,
         method: "GET"
-    }).then(function(parkRes){
+    }).then(parkRes => {
         // console.log(parkRes);
         
         // Remove the div with class statePark to avoide duplication of buttons.
         $(".statePark").remove();
 
         // Create new div with class statePark.
-        var stateParkDiv = $("<div class='statePark'>");
+        const stateParkDiv = $("<div class='statePark'>");
 
         // Attach new div to the div id left.
         $("#left").append(stateParkDiv);
         
         // forEach function that loops through API response.
-        parkRes.data.forEach(function(data){
+        // forEach function that loops through API response.
+        parkRes.data.forEach(data => {
           
             // Create a button with the name of each park returned in the response, and add class parkBtn.
-            var newParkBtn = $("<button class='parkBtn waves-effect waves-light btn-small'>").text(data.name);
+            const newParkBtn = $("<button class='parkBtn waves-effect waves-light btn-small'>").text(data.name);
 
             // Add a data-name attribute with each park name.
             newParkBtn.attr("data-name", data.parkCode);
 
             // forEach function to loop through the address array and take the city name to add as a value to each button.
-            data.addresses.forEach(function(address){
+            data.addresses.forEach(address => {
                 // console.log(address.city);
-                newParkBtn.attr("value", address.city);                
+                newParkBtn.attr("data-city", address.city);                
                 })
 
             // Append the button to section id left (we can change it later).
             $(".statePark").append(newParkBtn);
             
         })
-        
     })}
 
     // Function that looks for the park alerts.
@@ -109,33 +109,36 @@ $(document).ready(function(){
         $.ajax({
             url: url,
             method: "GET"
-        }).then(function(alertRes){
+        }).then(alertRes => {
             // console.log(alertRes);
 
-            // Created new div and h4.
-            var newAlertDiv = $("<div class='alertDiv'>");
-            var newAlertH4 = $("<h4>").text("Park Alerts");
+            // Remove div with class alertDiv.
+            $(".alertDiv").remove();
 
-            // Append the new h4 to the new div.
-            newAlertDiv.append(newAlertH4);
+            // Created new div and h4.
+            const newAlertDiv = `<div class="alertDiv">
+            <h4>Park Alerts</h4>
+            </div>`;
 
             // Append the new div to the div with class alert. 
             $(".alert").append(newAlertDiv);
 
             // In case the API return without any information for that park, then display a message.
             if (alertRes.data.length === 0){
-                var newAlertP1 = $("<p>").text("There are no alert messages for this park at this time.");
-                newAlertDiv.append(newAlertP1);
+                const newAlertP1 = `<p>There are no alert messages for this park at this time.</p>`;
+                $(".alertDiv").append(newAlertP1);
             }
             else {
                 // If API has a populated response, than loop through it.
-                alertRes.data.forEach(function(alert){
-                    // Create new h4, p, and if there is an url it also creates a "a" tag.
-                    var newAlerth5 = $("<h5>").text(alert.title);
-                    var newAlertP = $("<p>").text(alert.description);
-                    if (alert.url !== ""){var newAlertA = $("<a>").attr("href", alert.url).text(alert.title);}
+                alertRes.data.forEach( alert => {
+                    // Create new h5, p, and if there is an url it also creates a "a" tag.
+                    const newAlert = `<h5>${alert.title}</h5>
+                    <p>${alert.description}</p>`;
+                    
+                    let newAlertA;
+                    if (alert.url !== ""){newAlertA = `<a href=${alert.url}>${alert.title}</a>`};
                     // Append the new tags to the new div.
-                    newAlertDiv.append(newAlerth5, newAlertP, newAlertA);  
+                    $(".alertDiv").append(newAlert, newAlertA);  
                 })
             }
         })
@@ -148,33 +151,36 @@ $(document).ready(function(){
         $.ajax({
             url: url,
             method: "GET"
-        }).then(function(campRes){
+        }).then(campRes => {
             // console.log(campRes);
 
-            // Created new div and h4.
-            var newCampDiv = $("<div class='campDiv'>");
-            var newCampH4 = $("<h4>").text("Campgrounds");
+            // Remove div with class campDiv.
+            $(".campDiv").remove();
 
-            // Append the new h4 to the new div.
-            newCampDiv.append(newCampH4);
+            // Created new div and h4.
+            const newCampDiv = `<div class="campDiv">
+            <h4>Campgrounds</h4>
+            </div>`;
 
             // Append the new div to the div with class camp. 
             $(".camp").append(newCampDiv);
 
             // In case the API return without any information for that park, then display a message.
             if (campRes.data.length === 0){
-                var newCampP1 = $("<p>").text("There is no campground information for this park.");
-                newCampDiv.append(newCampP1);
+                const newCampP1 = `<p>There is no campground information for this park.</p>`;
+                $(".campDiv").append(newCampP1);
             }
             else{
                 // If API has a populated response, than loop through it.
-                campRes.data.forEach(function(camp){
+                campRes.data.forEach(camp => {
                     // Create new h5, p, and if there is an url for reservation it also creates a "a" tag.
-                    var newCamph5 = $("<h5>").text(camp.name);
-                    var newCampP = $("<p>").text(camp.description);
-                    if (camp.reservationUrl !== ""){var newCampA = $("<a>").attr("href", camp.reservationUrl).text("Click Here for Reservation")}
+                    const newCamph5 = `<h5>${camp.name}</h5>
+                    <p>${camp.description}`;
+
+                    let newCampA;
+                    if (camp.reservationUrl !== ""){newCampA = `<a href=${camp.reservationUrl}>Click Here for Reservation</a>`};
                     // Append the new tags to the new div.
-                    newCampDiv.append(newCamph5, newCampP, newCampA);
+                    $(".campDiv").append(newCamph5, newCampA);
                 })
             }
         })
@@ -187,37 +193,38 @@ $(document).ready(function(){
         $.ajax({
             url: url,
             method: "GET"
-        }).then(function(toDoRes){
+        }).then(toDoRes => {
             // console.log(toDoRes);
 
+            // Remove div with class toDoDiv.
+            $(".toDoDiv").remove();
+
             // variable to save the response path.
-            var activities = toDoRes.data;
+            const activities = toDoRes.data;
 
             // Created new div and h4.
-            var toDoDiv = $("<div class='toDoDiv'>");
-            var actHead = $("<h4>").text("Park Activites");
-
-            // Append the new h4 to the new div.
-            toDoDiv.append(actHead);
+            const toDoDiv = `<div class="toDoDiv">
+            <h4>Park Activites</h4>
+            </div>`;
 
             // Append the new div to the div with class toDo. 
             $(".toDo").append(toDoDiv);
 
             // In case the API return without any information for that park, then display a message.
             if (toDoRes.data.length === 0){
-                var toDoP = $("<p>").text("There are no activities listed for this park at this time.")
-                toDoDiv.append(toDoP);
+                const toDoP = `<p>There are no activities listed for this park at this time.</p>`;
+                $(".toDoDiv").append(toDoP);
             }
             else{
                 // Create a new ul tag and add class list to it.
-                var actList = $("<ul class='list'>");
+                const actList = $("<ul class='list'>");
                 // Append the new ul tag to the div created at variable toDoDiv.          
-                toDoDiv.append(actList);
+                $(".toDoDiv").append(actList);
                 // If API has a populated response, than loop through it.
-                for(var i=0; i < activities.length; i++){
+                for(let i=0; i < activities.length; i++){
                     // console.log(activities[i].activities[0].name + activities[i].title);
                     // Create a new list item for each activity type along with the activity title.
-                    var listItem = $("<li>").text(activities[i].activities[0].name + " - " + activities[i].title);
+                    let listItem = `<li>${activities[i].activities[0].name} - ${activities[i].title}`;
                     // Append each new list item to the ul tag.
                     actList.append(listItem);
                 }
@@ -231,18 +238,18 @@ $(document).ready(function(){
 
         // Create a new object to save the information for the favorite park.
         // Grab current parkName, parkCode, parkCity and inputStateCode to be added in the new favorite parks buttons.
-        var newFavorite = {
+        const newFavorite = {
             text: parkName,
             dataName: parkCode,
-            value: parkCity,
+            dataCity: parkCity,
             dataState: inputStateCode,
         };
-
+        
         // Create a variable with a boolean "true" to be used as a check before creating a button.
-        var notFound = true
+        let notFound = true
 
         // forEach loop through the favParkArray objects looking if the parkName inside the object property "text" already exist with that same name. If it does, then update the variable notFound to false.
-        favParkArray.forEach(function(fav){
+        favParkArray.forEach(fav => {
             if(fav.text === newFavorite.text){
             notFound = false}
         })
@@ -263,49 +270,46 @@ $(document).ready(function(){
     function createFavoritesBtn(){
 
         // Create a new div.
-        var newFavDiv = $("<div class='favButtons'>");
+        const newFavDiv = `<div class="favButtons"></div>`;
         // Inside div with class favParkList find buttons with class favButtons and remove them. This is to avoid duplication.
         $(".favParkList").find(".favButtons").remove();
-        
-        // forEach loop through each object inside the favParkArray to create a new button.
-        favParkArray.forEach(function(favLoop){
 
-            // Create a button, give class favParkBtn, add text and attributes saved in the object properties so the favorite park function just like the park buttons.
-            var favoritesBtn = $("<button class='favParkBtn waves-effect waves-light btn-small'>").text(favLoop.text).attr("data-name", favLoop.dataName).attr("value", favLoop.value).attr("data-state", favLoop.dataState);
-            // Append the new buttons to the div created at variable newFavDiv.
-            newFavDiv.append(favoritesBtn);
-        })
         // Append the new div to the div with class favParkList.
         $(".favParkList").append(newFavDiv);
+        
+        // forEach loop through each object inside the favParkArray to create a new button.
+        favParkArray.forEach(favLoop => {
+
+            // Create a button, give class favParkBtn, add text and attributes saved in the object properties so the favorite park function just like the park buttons.
+            const favoritesBtn = `<button class="favParkBtn waves-effect waves-light btn-small" data-name="${favLoop.dataName}" data-city="${favLoop.dataCity}" data-state="${favLoop.dataState}">${(favLoop.text)}</button>`;
+            // Append the new buttons to the div created at variable newFavDiv.
+            $(".favButtons").append(favoritesBtn);
+        })        
     }
 
     // Event listener for the button created inside the parkRes.data.forEach loop.
     $(document).on("click", ".parkBtn", function (event){
         event.preventDefault();
-        // Empty divs before appending the following to clean them before add new information.
-        $(".alert").empty();
-        $(".camp").empty();
-        $(".toDo").empty();
-
+        
         // Updates parkCode accordingly with the button clicked.
         parkCode = $(this).attr("data-name");
         // console.log(parkCode);
 
         // Grab button value to update the global variable parkCity.
-        parkCity = $(this).val();
+        parkCity = $(this).attr("data-city");
         // console.log(parkCity);
 
         // Grab button text to update the global variable parkName.
         parkName = $(this).text();
         
         // Create a new h4 with the park name.
-        var parkNameH4 = $("<h4 class='header'>").text(parkName + " National Park");
+        const parkNameH4 = `<h4 class="header">${parkName} National Park</h4>`;
         
         // Everytime a park name button is clicked the header is updated with the current clicked park name.
         $("header").empty().append(parkNameH4);
 
         // Create a button that gives the user the option to save the current park as favorite.
-        var favBtn = $("<button class='favBtn waves-effect waves-light btn-large'>").text("Save this park as Favorite");
+        const favBtn = `<button class="favBtn waves-effect waves-light btn-large">Save this park as Favorite</button>`;
         // Attach this button to the div with class favBtnDiv.
         $(".favBtnDiv").empty().append(favBtn);       
 
@@ -334,9 +338,6 @@ $(document).ready(function(){
     $(document).on("click", ".favParkBtn", function (event){
         event.preventDefault();
         // Empty divs before appending the following to clean them before add new information.
-        $(".alert").empty();
-        $(".camp").empty();
-        $(".toDo").empty();
         $(".favBtnDiv").empty();
 
         // Updates parkCode accordingly with the button clicked.
@@ -348,14 +349,14 @@ $(document).ready(function(){
         // console.log(parkState);
 
         // Grab button value to update the global variable parkCity.
-        parkCity = $(this).val();
+        parkCity = $(this).attr("data-city");
         // console.log(parkCity);
 
         // Grab button text to update the global variable parkName.
         parkName = $(this).text();
         
         // Create a new h4 with the park name.
-        var parkNameH4 = $("<h4 class='header'>").text(parkName + " National Park");
+        const parkNameH4 = `<h4 class="header">${parkName} National Park</h4>`;
         
         // Everytime a park name button is clicked the header is updated with the current clicked park name.
         $("header").empty().append(parkNameH4);
@@ -382,12 +383,14 @@ $(document).ready(function(){
     })
 
     // Function created to clean the favorite parks buttons.
-    $(".cleanFav").on("click", function (event){
+    $(".cleanFav").on("click", event => {
         event.preventDefault();
         // Clean local storage.
         localStorage.clear();
         // Remove the buttons for the saved favorite parks.
         $(".favParkBtn").remove();
+        // Empty favParkArray.
+        favParkArray = [];
     })
     
     // FFunction that looks for the forecast data.
@@ -397,54 +400,37 @@ $(document).ready(function(){
         $.ajax({
             url: url,
             method: "GET"
-        }).then(function(fiveDayRes){
+        }).then(fiveDayRes => {
             // console.log(fiveDayRes);
 
             // Variable to hold the forecast array.
-            var forecastArray = fiveDayRes.list
-            // Create a new h4 tag.
-            var newDayH4 = $("<h4>").text("5-Day Forecast");
-            // Create a new h5 tag with the current park city name.
-            var newDayH5 = $("<h5>").text(parkCity);
-            // Create a div with a class named card-deck to place the forecast result.
-            var newCardDeck = $("<div class='card-deck'>");
+            const forecastArray = fiveDayRes.list
+            // Create a new h4, h5 and div tag.
+            const newDay = `<h4>5-Day Forecast</h4>
+            <h5>${parkCity}</h5>
+            <div class="card-deck"></div>;`
 
             // Clean the div with id forecast-weather and append the new h5, h6, and div.
-            $("#forecast-weather").empty().append(newDayH4, newDayH5, newCardDeck);
+            $("#forecast-weather").empty().append(newDay);
 
             // For loop to take the one day out of forecast array.
-            for (var i=0; i < forecastArray.length; i+=8){
-                // Create a new div with class card-body to place each day inside one.
-                var newDivCardBody = $("<div class='card-body'>");
-
+            for (let i=0; i < forecastArray.length; i+=8){
                 // variable to hold date and format it to javaScript.
-                var date = new Date (forecastArray[i].dt_txt);
-                // console.log(date);
-                var displayDate = $("<p id='date'>").text(date.getMonth()+1 + "-" + date.getDate() + "-" + date.getFullYear());
+                const date = new Date (forecastArray[i].dt_txt);
 
                 // variable to hold icon name.
-                var icon = forecastArray[i].weather[0].icon;
-                // console.log(icon);
-
-                // Create a new img tag, and add an attribute with the image address along with the icon name held in the forDayIcon variable.
-                var imgDayIcon = $("<img>").attr("src", "https://openweathermap.org/img/wn/" + icon + ".png");           
-
-                // variable to hold temperature.
-                var temp = $("<p>").text("Temperature: " + forecastArray[i].main.temp + " ℉");
-                // console.log(temp);
-
-                // variable to hold wind speed.
-                var windSpeed = $("<p>").text("Wind Speed: " + forecastArray[i].wind.speed + " mph");;
-                // console.log(windSpeed);
-
-                // variable to hold humidity.
-                var humidity = $("<p>").text("Humidity: " + forecastArray[i].main.humidity + "%");
-                // console.log(humidity);
-
-                // Append the new tags to the div created at variable newDivCardBody.
-                newDivCardBody.append(displayDate, imgDayIcon, temp, windSpeed, humidity);
+                const icon = forecastArray[i].weather[0].icon;
+                
+                // Create a new div with class card-body to place each day inside one.
+                const newDivCardBody = `<div class="card-body">
+                <p class="bold">${date.getMonth()+1}-${date.getDate()}-${date.getFullYear()}</p>
+                <img src="https://openweathermap.org/img/wn/${icon}.png"></img>           
+                <p>Temperature: <span class="bold">${forecastArray[i].main.temp}</span> ℉
+                <br>Wind Speed: <span class="bold">${forecastArray[i].wind.speed}</span> mph <br>Humidity: <span class="bold">${forecastArray[i].main.humidity}</span>%
+                </p>
+                </div>`
                 // Append the div newDivCardBody to the div created at variable newCardDeck.
-                newCardDeck.append(newDivCardBody);
+                $(".card-deck").append(newDivCardBody);
             }
         })
     }
